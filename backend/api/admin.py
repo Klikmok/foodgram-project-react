@@ -37,8 +37,7 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorite_recipe.count()
 
     def tags(self, obj):
-        [tags.name for tags in obj.tags.all(
-            )[:MAX_DISPLAY]]
+        [tags.name for tags in obj.tags.all()[:MAX_DISPLAY]]
 
 
 @admin.register(models.Recipe_ingredient)
