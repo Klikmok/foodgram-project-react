@@ -1,10 +1,11 @@
 import csv
 import os
-from backend import settings
 
+from api.models import Ingredient
 from django.core.management.base import BaseCommand
 from progress.bar import IncrementalBar
-from api.models import Ingredient
+
+from backend import settings
 
 
 def ingredient_create(row):
