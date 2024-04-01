@@ -80,8 +80,7 @@ jobs:
       # Эта команда устанавливает зависимости для фронтенда
       run: |
         cd frontend/
-        rm package-lock.json
-        npm ci
+        npm install --package-lock-only
 
     - name: Test frontend
       # Запускаем тесты
