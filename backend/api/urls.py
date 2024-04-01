@@ -14,7 +14,6 @@ router.register(
 
 api_patterns = [
     path('', include(router.urls)),
-    path('users/', include('users.urls')),
 
 ]
 
