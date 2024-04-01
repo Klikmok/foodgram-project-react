@@ -79,8 +79,8 @@ jobs:
     - name: Install dependencies
       # Эта команда устанавливает зависимости для фронтенда
       run: |
-        rm package-lock.json
         cd frontend/
+        rm package-lock.json
         npm ci
 
     - name: Test frontend
