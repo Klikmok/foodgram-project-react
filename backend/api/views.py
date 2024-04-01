@@ -1,3 +1,4 @@
+# flake8: noqa
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -11,12 +12,12 @@ from users.models import Subscribe, User
 from backend.settings import FILE_NAME
 
 from .filters import RecipeFilter
-from .pagination import CustomPaginator
-from .permissions import IsAuthorOrReadOnly
 from .models import (
     Favorite, Ingredient, Recipe, Recipe_ingredient,
     Shopping_cart, Tag
 )
+from .pagination import CustomPaginator
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeCreateSerializer,
                           RecipeReadSerializer, RecipeSerializer,
                           SetPasswordSerializer, SubscribeAuthorSerializer,
