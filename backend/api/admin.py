@@ -20,17 +20,17 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(models.Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk', 'name', 'author', 'in_favorites',
-        'cooking_time', 'text', 'tags', 'image'
-    )
     list_editable = (
         'name', 'cooking_time', 'text', 'tags',
         'image', 'author'
     )
-    readonly_fields = ('in_favorites',)
+    list_display = (
+        'pk', 'name', 'author', 'in_favorites',
+        'cooking_time', 'text', 'tags', 'image'
+    )
     list_filter = ('name', 'author', 'tags')
-    empty_value_display = '-пусто-'
+    readonly_fields = ('in_favorites',)
+    empty_value_display = 'пусто'
 
     @admin.display(description='В избранном')
     def in_favorites(self, obj):
@@ -40,7 +40,7 @@ class RecipeAdmin(admin.ModelAdmin):
         [tags.name for tags in obj.tags.all()[:MAX_DISPLAY]]
 
 
-@admin.register(models.Recipe_ingredient)
+@admin.register(models.RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
     list_display = ('pk', 'recipe', 'ingredient', 'amount')
     list_editable = ('recipe', 'ingredient', 'amount')
@@ -52,7 +52,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_editable = ('user', 'recipe')
 
 
-@admin.register(models.Shopping_cart)
+@admin.register(models.ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'recipe')
     list_editable = ('user', 'recipe')

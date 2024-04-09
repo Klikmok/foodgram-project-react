@@ -1,23 +1,15 @@
 # flake8: noqa
 from django.urls import path, include
 from rest_framework import routers
-from api.views import TagViewSet, RecipeViewSet, IngredientViewSet, UserViewSet
+from api.views import TagViewSet, RecipeViewSet, IngredientViewSet, UsersViewSet
 
 router = routers.DefaultRouter()
-router.register(r'recipes', RecipeViewSet, basename='recipes')
-router.register(r'tags', TagViewSet, basename='tags')
-router.register(
-    r'ingredients', IngredientViewSet, basename='ingredients')
-router.register(
-    r'users', UserViewSet, basename='users'
-)
-
-api_patterns = [
-    path('', include(router.urls)),
-
-]
+router.register('ingredients', IngredientViewSet, basename='ingredients')
+router.register('recipes', RecipeViewSet, basename='recipes')
+router.register('users', UsersViewSet, basename='users')
+router.register('tags', TagViewSet, basename='tags')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path(r'auth/', include('djoser.urls.authtoken')),
+    path('auth/', include('djoser.urls.authtoken')),
 ]

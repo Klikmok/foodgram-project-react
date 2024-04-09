@@ -16,18 +16,18 @@ def ingredient_create(row):
 
 
 class Command(BaseCommand):
-    help = "Load ingredients to DB"
+    help = "Load data to DB"
 
     def handle(self, *args, **options):
         path = os.path.join(settings.BASE_DIR, 'data/ingredients.csv')
         with open(path, 'r', encoding='utf-8') as file:
-            row_count = sum(1 for row in file)
+            count = sum(1 for row in file)
         with open(path, 'r', encoding='utf-8') as file:
             reader = csv.reader(file)
-            bar = IncrementalBar('ingredients.csv'.ljust(17), max=row_count)
+            custom_bar = IncrementalBar('ingredients.csv'.ljust(17), max=count)
             next(reader)
             for row in reader:
-                bar.next()
+                custom_bar.next()
                 ingredient_create(row)
-            bar.finish()
-        self.stdout.write("[!] The ingredients has been loaded successfully.")
+            custom_bar.finish()
+        self.stdout.write("Data has been loaded succesfully.")

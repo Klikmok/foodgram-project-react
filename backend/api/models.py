@@ -2,21 +2,23 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from users.models import User
 
+from .constants import MAX_FIELD_LENGHT
+
 
 class Ingredient(models.Model):
     name = models.CharField(
-        'Название',
-        max_length=200
+        'Название ингредиента',
+        max_length=MAX_FIELD_LENGHT
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=200
+        max_length=MAX_FIELD_LENGHT
     )
 
     class Meta:
-        ordering = ['name']
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
+        ordering = ['name']
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -24,24 +26,24 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(
-        'Название',
-        max_length=200
+        'Название тега',
+        max_length=MAX_FIELD_LENGHT
     )
     color = models.CharField(
-        'Цвет в HEX',
+        'Цвет тега',
         max_length=7,
         null=True,
         validators=[
             RegexValidator(
                 '^#([a-fA-F0-9]{6})',
-                message='Поле должно содержать HEX-код выбранного цвета.'
+                message='Поле должно быть HEX-кодом выбранного цвета.'
             )
         ]
 
     )
     slug = models.SlugField(
         'Уникальный слаг',
-        max_length=200,
+        max_length=MAX_FIELD_LENGHT,
         unique=True,
         null=True
     )
@@ -56,14 +58,14 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     name = models.CharField(
-        'Название',
-        max_length=200
+        'Название рецепта',
+        max_length=MAX_FIELD_LENGHT
     )
     text = models.TextField(
-        'Описание'
+        'Описание рецепта'
     )
     cooking_time = models.IntegerField(
-        'Время приготовления, мин',
+        'Время приготовления в минутах',
         validators=[MinValueValidator(1)]
     )
     image = models.ImageField(
@@ -83,7 +85,7 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='Recipe_ingredient',
+        through='RecipeIngredient',
         through_fields=('recipe', 'ingredient'),
         verbose_name='Ингредиенты'
     )
@@ -101,7 +103,7 @@ class Recipe(models.Model):
         return self.name
 
 
-class Recipe_ingredient(models.Model):
+class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -130,10 +132,12 @@ class Recipe_ingredient(models.Model):
         ]
 
     def __str__(self):
-        return (f'{self.recipe.name}: '
-                f'{self.ingredient.name} - '
-                f'{self.amount} '
-                f'{self.ingredient.measurement_unit}')
+        return (
+            f'{self.recipe.name}: '
+            f'{self.ingredient.name} - '
+            f'{self.amount} '
+            f'{self.ingredient.measurement_unit}'
+        )
 
 
 class Favorite(models.Model):
@@ -164,7 +168,7 @@ class Favorite(models.Model):
         return f'{self.user.username} - {self.recipe.name}'
 
 
-class Shopping_cart(models.Model):
+class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
