@@ -1,12 +1,11 @@
-from users.models import User, Subscribe
-from rest_framework import serializers
-from drf_base64.fields import Base64ImageField
-from djoser.serializers import UserSerializer
 from django.db import transaction
+from djoser.serializers import UserSerializer
+from drf_base64.fields import Base64ImageField
+from rest_framework import serializers
+from users.models import Subscribe, User
 
-from .models import (
-    ShoppingCart, RecipeIngredient, Ingredient, Tag, Favorite, Recipe
-)
+from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 
 
 class UsersSerializer(UserSerializer):

@@ -1,8 +1,8 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from djoser.views import UserViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -10,20 +10,14 @@ from rest_framework.response import Response
 from users.models import Subscribe, User
 
 from .filters import RecipesFilter
-from .permissions import IsAuthorOrReadOnly
+from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 from .pagination import FoodgramPagination
-from .models import (
-    Tag, Ingredient, Recipe, ShoppingCart, Favorite, RecipeIngredient
-)
-from .serializers import (
-    SubscribingSerializer,
-    TagSerializer,
-    IngredientSerializer,
-    RecipeSerializer,
-    CreateRecipeSerializer,
-    MainRecipeSerializer,
-    UsersSerializer
-)
+from .permissions import IsAuthorOrReadOnly
+from .serializers import (CreateRecipeSerializer, IngredientSerializer,
+                          MainRecipeSerializer, RecipeSerializer,
+                          SubscribingSerializer, TagSerializer,
+                          UsersSerializer)
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
