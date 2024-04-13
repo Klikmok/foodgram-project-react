@@ -20,18 +20,18 @@ class Subscribe(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Подписчик',
+        verbose_name='подписчик',
         related_name='subscriber',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Подписан',
+        verbose_name='подписан',
         related_name='subscribing',
     )
 
     def __str__(self):
-        return f'{self.user.username} - подписан на {self.author.username}'
+        return f'На {self.author.username} подписан {self.user.username}'
 
     class Meta:
         constraints = [

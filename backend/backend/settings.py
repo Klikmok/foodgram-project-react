@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
+POSTGRE_DB = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'django'),
@@ -95,13 +95,14 @@ DATABASES = {
     }
 }
 
+SQLITE3_DB = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = SQLITE3_DB if os.getenv('IS_TEST_DB', default=False) == 'True' else POSTGRE_DB
 
 
 # Password validation
@@ -135,7 +136,7 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
     'DEFAULT_PAGINATION_CLASS': [
-        'api.pagination.CustomPagination',
+        'api.pagination.FoodgramPagination',
     ],
     'PAGE_SIZE': 6,
     'SEARCH_PARAM': 'name',
@@ -146,7 +147,7 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
     'SERIALIZERS': {
-        'user_create': 'api.serializers.UserSignUpSerializer',
+        'user_create': 'api.serializers.UsersSerializer',
         'user': 'api.serializers.UsersSerializer',
         'current_user': 'api.serializers.UsersSerializer',
     },
@@ -188,5 +189,4 @@ EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 DEFAULT_FROM_EMAIL = 'get_token@api_yamdb.ru'
 
 CORS_ORIGIN_ALLOW_ALL = True
-
 CORS_URLS_REGEX = r'^/api/.*$'
