@@ -7,17 +7,17 @@ from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from users.models import Subscribe, User
 
-from .filters import RecipesFilter
-from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                     ShoppingCart, Tag)
-from .pagination import FoodgramPagination
-from .permissions import IsAuthorOrReadOnly
-from .serializers import (CreateRecipeSerializer, IngredientSerializer,
-                          MainRecipeSerializer, RecipeSerializer,
-                          SubscribingSerializer, TagSerializer,
-                          UsersSerializer)
+from users.models import Subscribe, User
+from api.filters import RecipesFilter
+from api.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                        ShoppingCart, Tag)
+from api.pagination import FoodgramPagination
+from api.permissions import IsAuthorOrReadOnly
+from api.serializers import (CreateRecipeSerializer, IngredientSerializer,
+                             MainRecipeSerializer, RecipeSerializer,
+                             SubscribingSerializer, TagSerializer,
+                             UsersSerializer)
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -58,12 +58,10 @@ class RecipesViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, **kwargs):
+        user = request.user
         if request.method == 'DELETE':
             recipe = get_object_or_404(Recipe, id=kwargs.get('pk'))
-            favorite_recipe = Favorite.objects.filter(
-                user=request.user,
-                recipe=recipe
-            )
+            favorite_recipe = user.favorite_user.filter(recipe=recipe)
             if not favorite_recipe.exists():
                 return Response(
                     {'errors': 'Рецепта нет в избранном.'},
@@ -88,8 +86,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 context={"request": request}
             )
             serializer.is_valid(raise_exception=True)
-            if not Favorite.objects.filter(
-                user=request.user,
+            if not user.favorite_user.filter(
                 recipe=recipe
             ).exists():
                 Favorite.objects.create(user=request.user, recipe=recipe)
@@ -108,12 +105,10 @@ class RecipesViewSet(viewsets.ModelViewSet):
         pagination_class=None
     )
     def shopping_cart(self, request, **kwargs):
+        user = request.user
         if request.method == 'DELETE':
-            recipe = get_object_or_404(Recipe, id=kwargs.get('pk'))
-            shopping_cart = ShoppingCart.objects.filter(
-                user=request.user,
-                recipe=recipe
-            )
+            recipe = get_object_or_404(Recipe, id=kwargs['pk'])
+            shopping_cart = user.cart_user.filter(recipe=recipe)
             if not shopping_cart.exists():
                 return Response(
                     {'errors': 'Рецепта нет в списке.'},
@@ -125,7 +120,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_204_NO_CONTENT
             )
 
-        if not Recipe.objects.filter(id=kwargs.get('pk')).exists():
+        if not Recipe.objects.filter(id=kwargs['pk']).exists():
             return Response(
                 {'errors': 'Рецепта не существует.'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -138,10 +133,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 context={"request": request}
             )
             serializer.is_valid(raise_exception=True)
-            if not ShoppingCart.objects.filter(
-                user=request.user,
-                recipe=recipe
-            ).exists():
+            if not user.cart_user.filter(recipe=recipe).exists():
                 ShoppingCart.objects.create(user=request.user, recipe=recipe)
                 return Response(
                     serializer.data,
@@ -223,16 +215,8 @@ class UsersViewSet(UserViewSet):
     )
     def subscribe(self, request, id=None):
         author = get_object_or_404(User, id=id)
-        subscribtion = Subscribe.objects.filter(
-            user=request.user,
-            author=author
-        )
         user = request.user
-        if user == author:
-            return Response(
-                {'errors': 'Нельзя подписаться на себя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        subscribtion = user.subscriber.filter(author=author)
 
         if request.method == 'POST':
             if subscribtion.exists():

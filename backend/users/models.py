@@ -30,9 +30,6 @@ class Subscribe(models.Model):
         related_name='subscribing',
     )
 
-    def __str__(self):
-        return f'На {self.author.username} подписан {self.user.username}'
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -40,5 +37,9 @@ class Subscribe(models.Model):
                 name='unique_subscribe'
             )
         ]
+        ordering = ['-id']
         verbose_name = 'Подписка на авторов'
         verbose_name_plural = 'Подписки на авторов'
+
+    def __str__(self):
+        return f'На {self.author.username} подписан {self.user.username}'

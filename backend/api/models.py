@@ -1,8 +1,9 @@
-from django.core.validators import MinValueValidator, RegexValidator
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    RegexValidator)
 from django.db import models
-from users.models import User
 
-from .constants import MAX_FIELDS_LENGHT
+from users.models import User
+from api.constants import MAX_FIELD_NUM, MAX_FIELDS_LENGHT, MIN_FIELD_NUM
 
 
 class Tag(models.Model):
@@ -30,6 +31,7 @@ class Tag(models.Model):
     )
 
     class Meta:
+        ordering = ['-slug']
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -64,9 +66,18 @@ class Recipe(models.Model):
     text = models.TextField(
         'Описание рецепта.'
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления в минутах',
-        validators=[MinValueValidator(1)]
+        validators=[
+            MaxValueValidator(
+                MAX_FIELD_NUM,
+                message='Время готовки не должно быть слишком долгим!'
+            ),
+            MinValueValidator(
+                MIN_FIELD_NUM,
+                message='Время готовки не должно быть меньше 1!'
+            )
+        ]
     )
     image = models.ImageField(
         'Картинка',
@@ -126,6 +137,7 @@ class ShoppingCart(models.Model):
         ]
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзина'
+        ordering = ['-id']
 
     def __str__(self):
         return f'{self.user.username} - {self.recipe.name}'
@@ -144,9 +156,19 @@ class RecipeIngredient(models.Model):
         related_name='ingredients',
         verbose_name='Ингредиент'
     )
-    amount = models.IntegerField(
+    amount = models.PositiveSmallIntegerField(
         'Количество',
-        validators=[MinValueValidator(1)]
+        default=MIN_FIELD_NUM,
+        validators=[
+            MaxValueValidator(
+                MAX_FIELD_NUM,
+                message='Количество не должно быть слишком большим!'
+            ),
+            MinValueValidator(
+                MIN_FIELD_NUM,
+                message='Количество не должно быть меньше 1!'
+            )
+        ]
     )
 
     class Meta:
@@ -158,6 +180,7 @@ class RecipeIngredient(models.Model):
                 name='unique_combination'
             )
         ]
+        ordering = ['-id']
 
 
 class Favorite(models.Model):
@@ -183,6 +206,7 @@ class Favorite(models.Model):
                 name='unique_favorite'
             )
         ]
+        ordering = ['-id']
 
     def __str__(self):
         return f'{self.user.username} - {self.recipe.name}'
