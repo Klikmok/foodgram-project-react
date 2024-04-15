@@ -82,5 +82,74 @@ sudo docker-compose up -d --build
     - Проект будет доступен по IP вашего удаленного сервера
 ## Проект заупущен, и функционирует по адресу:
 ### https://foodgram.servecounterstrike.com/recipes
+## Использованые технологии:
+### Проект реализован на Django и DjangoRestFramework. Доступ к данным реализован через API-интерфейс. Документация к API написана с использованием Redoc. Работа с удаленным сервером через ubuntu, gunicorn, nginx; работа с контейнерами через docker;  
+## Эндпоинты проекта:
+Получение и удаление токена авторизации
+
+```
+POST /api/auth/token/login/
+POST /api/auth/token/logout/
+```
+
+Регистрация нового пользователя: 
+
+```
+POST /api/users/
+```
+
+Получение данных текущего пользователя:
+
+```
+GET /api/users/me/
+```
+
+Получение страницы определенного пользователя и списка всех пользователей
+```
+GET /api/users/:id/
+GET /api/users/?page=1&limit=3
+```
+
+Подписка и отписка на определенного пользователя
+
+```
+POST /api/users/:id/subscribe/?recipes_limit=3
+DELETE /api/users/:id/subscribe/
+```
+
+Подписки пользователя
+```
+GET /api/users/subscriptions/
+```
+
+Получение рецепта и списка рецептов
+```
+GET /api/recipes/:id/
+GET /api/recipes/
+```
+
+Создание, обновление и удаление рецепта
+```
+POST /api/recipes/
+PATCH /api/recipes/:id/
+DELETE /api/recipes/:id/
+```
+
+Добавление рецепта в избранное и удаление из избранного
+```
+POST /api/recipes/:id/favorite/
+DELETE /api/recipes/:id/favorite/
+```
+
+Добавление рецепта в список покупок и удаление из списка покупок
+```
+POST /api/recipes/:id/shopping_cart/
+DELETE /api/recipes/:id/shopping_cart/
+```
+
+Скачать список покупок
+```
+GET /api/recipes/download_shopping_cart/
+```
 
 # Бекэнд и девопс проекта выполнил [Рыбаков Алексей](https://github.com/Klikmok)
